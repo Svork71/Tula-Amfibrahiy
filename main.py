@@ -1,39 +1,35 @@
-import random
-import PyQt5
-import sys
+import argparse
 
-from PyQt5.QtGui import QPainter, QColor
-from PyQt5 import uic
-from PyQt5.QtWidgets import QPushButton, QWidget, QApplication
+p = argparse.ArgumentParser()
+p.add_argument("--barbie", type=int, default=50)
+p.add_argument("--cars", type=int, default=50)
+p.add_argument("--movie", choices=['melodrama', 'football', 'other'], default='other')
 
-class Example(QWidget):
-    def __init__(self):
-        super().__init__()
-        uic.loadUi('UI.ui', self)
-        self.do_paint = False
-        self.pushButton.clicked.connect(self.paint)
+arr = p.parse_args()
+boy = 0
+factors = [100 - arr.barbie, arr.cars]
 
-    def paintEvent(self, event):
-        if self.do_paint:
-            qp = QPainter()
-            qp.begin(self)
-            self.draw_flag(qp)
-            qp.end()
-        self.do_paint = False
+if arr.barbie < 0 or arr.barbie > 100:
+    arr.barbie = 50
+if arr.cars < 0 or arr.cars > 100:
+    arr.cars = 50
+if arr.movie == 'melodrama':
+    factors.append(0)
+elif arr.movie == 'football':
+    factors.append(100)
+else:
+    factors.append(50)
 
-    def paint(self):
-        self.do_paint = True
-        self.update()
+for f in factors:
+    if f < 0:
+        boy = 0
+    elif f > 100:
+        boy += 100
+    else:
+        boy += f
 
-    def draw_flag(self, qp):
-        d = random.randint(10, 100)
-        qp.setBrush(QColor(255, 255, 0))
-        qp.drawEllipse(d, d, d, d)
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = Example()
-    ex.show()
-    sys.exit(app.exec())
-
+if boy % 3 > 1.5:
+    boy = int(boy / 3) + 1
+else:
+    boy = int(boy / 3)
+print(f"boy: {boy}\ngirl: {100 - boy}")
